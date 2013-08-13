@@ -85,19 +85,21 @@ public class Protocol
 			map.put(PHONE, json.getString(PHONE));
 			return map;
 		} catch (JSONException e) {
-			System.out.println("Unable to decode receive text message. Probably a misformatted JSON string");
+			System.out.println("JSON Error: Unable to decode receive text message.");
 			e.printStackTrace();
-			return null;
 		}
-
+		return null;
 	}
 
 	private HashMap<String, String> decodeContactRequest(JSONObject json)
 	{
 		try {
-			System.out.println(json.getString(CONTACTS));
+			//System.out.println(json.getString(CONTACTS));
+			HashMap<String, String> map = new HashMap<String, String>();
+			map.put(CONTACTS, json.getString(CONTACTS));
+			return map;
 		} catch(Exception e) {
-			
+			System.out.println("JSON Error: Unable to decode contacts.");
 		}
 		return null;
 	}
