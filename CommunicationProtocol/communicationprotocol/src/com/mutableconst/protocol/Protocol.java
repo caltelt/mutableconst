@@ -50,9 +50,9 @@ public class Protocol
 	public String encodeSendTextMessage(String phone, String message)
 	{
 		JSONObject json = new JSONObject();
+		//Put  name in here
 		json.put(PHONE, phone);
 		json.put(MESSAGE, message);
-
 		json.put(TYPE, TEXT_MESSAGE_TYPE);
 		return json.toString();
 	}
