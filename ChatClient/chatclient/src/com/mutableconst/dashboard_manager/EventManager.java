@@ -4,6 +4,7 @@ import com.mutableconst.chatclient.gui.BuddyListWindow;
 import com.mutableconst.chatclient.gui.SystemTrayInterface;
 import com.mutableconst.chatclient.gui.TextWindow;
 import com.mutableconst.models.Buddy;
+import com.mutableconst.protocol.Protocol;
 import java.util.HashMap;
 import javax.swing.JFrame;
 
@@ -14,7 +15,14 @@ public class EventManager {
 	
 	public static void main(String[] args) {
 		BuddyListWindow.focusBuddyListWindow();
+		Preferences.loadPreferences();
 		new SystemTrayInterface();
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			public void run() {
+				Preferences.savePreferences();
+			}
+		});
+		Protocol.getProtocol().test();
 	}
 
 	private EventManager() {
@@ -52,4 +60,5 @@ public class EventManager {
 	public void focusBuddyListWindow() {
 		BuddyListWindow.focusBuddyListWindow();
 	}
+	
 }

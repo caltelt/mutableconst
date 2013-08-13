@@ -1,11 +1,13 @@
 package com.mutableconst.chatclient.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
@@ -21,6 +23,8 @@ import com.mutableconst.models.Buddy;
 
 public class TextWindow extends JFrame implements KeyListener, WindowListener {
 
+	private final String SENDER_PREFIX = "Me: ";
+	private final String NEW_LINE = "\n";
 	private JScrollPane conversationView, sendMessageView;
 	private JTextArea conversationText, sendMessageText;
 	private JButton sendButton;
@@ -38,29 +42,26 @@ public class TextWindow extends JFrame implements KeyListener, WindowListener {
 		addKeyListener(this);
 		addWindowListener(this);
 		setLayout(new BorderLayout());
-		
+
 		conversationText = new JTextArea();
-		conversationText.setMinimumSize(new Dimension(495,310));
-		conversationText.setPreferredSize(new Dimension(495,310));
-		conversationText.setSize(555,375);
+		conversationText.setMinimumSize(new Dimension(495, 310));
+		conversationText.setSize(555, 375);
 		conversationText.setEditable(false);
 		conversationText.setLineWrap(true);
-		
+
 		conversationView = new JScrollPane(conversationText);
+		conversationView.setPreferredSize(new Dimension(495, 310));
 		conversationView.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		
+
 		sendMessageText = new JTextArea();
 		sendMessageText.setMinimumSize(new Dimension(450, 35));
 		sendMessageText.setLineWrap(true);
 		sendMessageText.addKeyListener(this);
-		DefaultCaret caret = (DefaultCaret)sendMessageText.getCaret();
-		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-		
+
 		sendMessageView = new JScrollPane(sendMessageText);
 		sendMessageView.setPreferredSize(new Dimension(450, 35));
 		sendMessageView.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		
-		
+
 		sendButton = new JButton("Send");
 		sendButton.setMaximumSize(new Dimension(65, 25));
 		sendButton.setMinimumSize(new Dimension(65, 25));
@@ -69,7 +70,7 @@ public class TextWindow extends JFrame implements KeyListener, WindowListener {
 				sendMessage();
 			}
 		});
-		
+
 		verticalBox = Box.createVerticalBox();
 		horizontalBox = Box.createHorizontalBox();
 		horizontalBox.add(sendMessageView);
@@ -77,14 +78,15 @@ public class TextWindow extends JFrame implements KeyListener, WindowListener {
 		horizontalBox.add(sendButton);
 		verticalBox.add(conversationView);
 		verticalBox.add(horizontalBox);
-		
+
 		add(verticalBox);
+
 	}
-	
+
 	private void sendMessage() {
 		String message = sendMessageText.getText();
-		if(message.length() > 0) {
-			conversationText.append(message + "\n");
+		if (message.length() > 0) {
+			conversationText.append(SENDER_PREFIX + message + NEW_LINE);
 			sendMessageText.setText(null);
 		}
 	}
@@ -117,5 +119,5 @@ public class TextWindow extends JFrame implements KeyListener, WindowListener {
 	public void windowActivated(WindowEvent e) {}
 
 	public void windowDeactivated(WindowEvent e) {}
-
+	
 }

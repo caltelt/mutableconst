@@ -9,6 +9,8 @@ import javax.swing.Box;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import com.mutableconst.models.Buddy;
 
@@ -30,13 +32,18 @@ public class BuddyListWindow extends JFrame {
 		getBuddyListWindow().toFront();
 		getBuddyListWindow().setExtendedState(JFrame.NORMAL);
 	}
-
+	
 	private BuddyListWindow() {
 		super("MutableConst");
 		setSize(225, 750);
 		setMinimumSize(new Dimension(225, 750));
 		setLocation((int) (GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().getWidth() - getWidth()), 0);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+			//Ignore
+		}
 		friendsArea = new JPanel();
 		friendsArea.setBackground(Color.red);
 		friendsArea.setBounds(0, 0, getWidth(), getHeight());
