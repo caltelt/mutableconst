@@ -67,7 +67,7 @@ public class TextWindow extends JFrame implements KeyListener, WindowListener {
 		sendButton.setMinimumSize(new Dimension(65, 25));
 		sendButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				sendMessage();
+				startSendMessage();
 			}
 		});
 
@@ -83,11 +83,12 @@ public class TextWindow extends JFrame implements KeyListener, WindowListener {
 
 	}
 
-	private void sendMessage() {
+	private void startSendMessage() {
 		String message = sendMessageText.getText();
 		if (message.length() > 0) {
 			conversationText.append(SENDER_PREFIX + message + NEW_LINE);
 			sendMessageText.setText(null);
+			EventManager.getEventManager().sendTextMessage(buddy, message);
 		}
 	}
 
@@ -95,7 +96,7 @@ public class TextWindow extends JFrame implements KeyListener, WindowListener {
 	public void keyPressed(KeyEvent e) {
 		if (e.getExtendedKeyCode() == KeyEvent.VK_ENTER) {
 			e.consume();
-			sendMessage();
+			startSendMessage();
 		}
 	}
 

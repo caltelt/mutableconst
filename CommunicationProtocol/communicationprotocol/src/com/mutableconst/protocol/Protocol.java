@@ -9,13 +9,13 @@ import org.json.JSONObject;
  * Singleton class for encoding requests/responses to and from JSON
  * 
  * Basic commands go <COMMAND>:<DATA> For example:
- * { "TYPE":"1" 
+ * { "TYPE":"TEXT_MESSAGE_TYPE" 
  *   "NAME":"Nicholas"
  *   "PHONE":"1-800-999-9999"
  *   "MESSAGE":"Slenderman is in the woods"
  * }
  * 
- * { "TYPE":"2"
+ * { "TYPE":"CONTACT_REQUEST_TYPE"
  *   "CONTACTS":"Casey Foster|1-262-555-8989,Nicholas|1-994-555-2121" 
  * }
  * 
@@ -36,9 +36,6 @@ public class Protocol
 	private final String TEXT_MESSAGE_TYPE = "TEXT_MESSAGE_TYPE";
 	private final String CONTACT_REQUEST_TYPE = "CONTACT_REQUEST_TYPE";
 
-	//Misc (Probably won't be needed later)
-	private final String FILLER = "";
-
 	private Protocol()
 	{}
 
@@ -53,8 +50,9 @@ public class Protocol
 	public String encodeSendTextMessage(String phone, String message)
 	{
 		JSONObject json = new JSONObject();
-		json.put(MESSAGE, message);
 		json.put(PHONE, phone);
+		json.put(MESSAGE, message);
+
 		json.put(TYPE, TEXT_MESSAGE_TYPE);
 		return json.toString();
 	}
@@ -68,7 +66,7 @@ public class Protocol
 	{
 		JSONObject json = new JSONObject(jsonString);
 		String requestHeader = json.getString(TYPE);
-		System.out.println("Decoding Raw Object: " + requestHeader);
+		//System.out.println("Decoding Raw Object: " + requestHeader);
 		switch (requestHeader) {
 			case TEXT_MESSAGE_TYPE:
 				return decodeReceiveTextMessage(json);
@@ -102,13 +100,6 @@ public class Protocol
 			
 		}
 		return null;
-	}
-	
-	public void test() 
-	{
-		String encodedText = encodeSendTextMessage("262-555-9999", "Slenderman is in the woods");
-		System.out.println(encodedText.toString());
-		System.out.println(decodeRawRequest(encodedText).toString());
 	}
 
 }

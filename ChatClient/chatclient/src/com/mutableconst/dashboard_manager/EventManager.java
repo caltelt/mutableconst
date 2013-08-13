@@ -5,14 +5,16 @@ import com.mutableconst.chatclient.gui.SystemTrayInterface;
 import com.mutableconst.chatclient.gui.TextWindow;
 import com.mutableconst.models.Buddy;
 import com.mutableconst.protocol.Protocol;
+
 import java.util.HashMap;
+
 import javax.swing.JFrame;
 
 public class EventManager {
 
 	private static EventManager reference;
 	private HashMap<Buddy, TextWindow> windows;
-	
+
 	public static void main(String[] args) {
 		BuddyListWindow.focusBuddyListWindow();
 		Preferences.loadPreferences();
@@ -22,7 +24,7 @@ public class EventManager {
 				Preferences.savePreferences();
 			}
 		});
-		Protocol.getProtocol().test();
+		//Protocol.getProtocol().test();
 	}
 
 	private EventManager() {
@@ -60,5 +62,10 @@ public class EventManager {
 	public void focusBuddyListWindow() {
 		BuddyListWindow.focusBuddyListWindow();
 	}
-	
+
+	public void sendTextMessage(Buddy buddy, String message) {
+		String jsonString = Protocol.getProtocol().encodeSendTextMessage(buddy.getPhoneNumber(), message);
+		System.out.println(jsonString);
+	}
+
 }
