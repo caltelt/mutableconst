@@ -26,15 +26,15 @@ public class Protocol
 	private static Protocol protocol = null;
 
 	//JSON Keys
-	private final String TYPE = "TYPE";
-	private final String PHONE = "PHONE";
-	private final String NAME = "NAME";
-	private final String MESSAGE = "MESSAGE";
-	private final String CONTACTS = "CONTACTS";
+	public final static String TYPE = "TYPE";
+	public final static String PHONE = "PHONE";
+	public final static String NAME = "NAME";
+	public final static String MESSAGE = "MESSAGE";
+	public final static String CONTACTS = "CONTACTS";
 
 	//Header Types
-	private final String TEXT_MESSAGE_TYPE = "TEXT_MESSAGE_TYPE";
-	private final String CONTACT_REQUEST_TYPE = "CONTACT_REQUEST_TYPE";
+	private final static String TEXT_MESSAGE_TYPE = "TEXT_MESSAGE_TYPE";
+	private final static String CONTACT_REQUEST_TYPE = "CONTACT_REQUEST_TYPE";
 
 	private Protocol()
 	{}
@@ -85,19 +85,25 @@ public class Protocol
 			map.put(PHONE, json.getString(PHONE));
 			return map;
 		} catch (JSONException e) {
-			System.out.println("Unable to decode receive text message. Probably a misformatted JSON string");
+			System.out.println("JSON Error: Unable to decode text message.");
 			e.printStackTrace();
-			return null;
 		}
-
+		return null;
 	}
 
 	private HashMap<String, String> decodeContactRequest(JSONObject json)
 	{
 		try {
 			System.out.println(json.getString(CONTACTS));
+		} catch (Exception e) {
+
+
+			//System.out.println(json.getString(CONTACTS));
+			HashMap<String, String> map = new HashMap<String, String>();
+			map.put(CONTACTS, json.getString(CONTACTS));
+			return map;
 		} catch(Exception e) {
-			
+			System.out.println("JSON Error: Unable to decode contacts.");
 		}
 		return null;
 	}
