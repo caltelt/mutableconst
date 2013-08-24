@@ -14,30 +14,27 @@ public class EventManager {
 
 	private static EventManager reference;
 	private HashMap<Buddy, TextWindow> windows;
-	private Connection connection;
 
 	public static void main(String[] args) {
-		reference = new EventManager();
-	}
-
-	private EventManager() {
-		setupEnviornment();
-	}
-	
-	private void setupEnviornment() {
-		Preferences.loadPreferences();
 		BuddyListWindow.focusBuddyListWindow();
-		SystemTrayInterface.startSystemTray();
+		Preferences.loadPreferences();
+		new SystemTrayInterface();
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
 				Preferences.savePreferences();
 			}
 		});
+		//Protocol.getProtocol().test();
+	}
+
+	private EventManager() {
 		windows = new HashMap<Buddy, TextWindow>();
-		connection = new Connection();
 	}
 
 	public static EventManager getEventManager() {
+		if (reference == null) {
+			reference = new EventManager();
+		}
 		return reference;
 	}
 
@@ -69,7 +66,6 @@ public class EventManager {
 	public void sendTextMessage(Buddy buddy, String message) {
 		String jsonString = Protocol.getProtocol().encodeSendTextMessage(buddy.getPhoneNumber(), message);
 		System.out.println(jsonString);
-		connection.addRequest(jsonString);
 	}
 
 }
