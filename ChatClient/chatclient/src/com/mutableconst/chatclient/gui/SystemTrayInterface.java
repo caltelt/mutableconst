@@ -11,19 +11,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-
 import javax.swing.JOptionPane;
 
 import com.mutableconst.dashboard_manager.EventManager;
 
 public class SystemTrayInterface {
 
-	private SystemTray systemTray;
-	private TrayIcon trayIcon;
-	private PopupMenu popupMenu;
-
-	public SystemTrayInterface() {
+	public static void startSystemTray() {
+		SystemTray systemTray;
+		TrayIcon trayIcon;
+		PopupMenu popupMenu;
 		if (SystemTray.isSupported()) {
 			try {
 				MenuItem item;

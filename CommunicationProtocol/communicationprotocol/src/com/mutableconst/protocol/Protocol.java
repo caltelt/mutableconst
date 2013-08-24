@@ -26,15 +26,15 @@ public class Protocol
 	private static Protocol protocol = null;
 
 	//JSON Keys
-	private final String TYPE = "TYPE";
-	private final String PHONE = "PHONE";
-	private final String NAME = "NAME";
-	private final String MESSAGE = "MESSAGE";
-	private final String CONTACTS = "CONTACTS";
+	public final static String TYPE = "TYPE";
+	public final static String PHONE = "PHONE";
+	public final static String NAME = "NAME";
+	public final static String MESSAGE = "MESSAGE";
+	public final static String CONTACTS = "CONTACTS";
 
 	//Header Types
-	private final String TEXT_MESSAGE_TYPE = "TEXT_MESSAGE_TYPE";
-	private final String CONTACT_REQUEST_TYPE = "CONTACT_REQUEST_TYPE";
+	private final static String TEXT_MESSAGE_TYPE = "TEXT_MESSAGE_TYPE";
+	private final static String CONTACT_REQUEST_TYPE = "CONTACT_REQUEST_TYPE";
 
 	private Protocol()
 	{}
@@ -67,12 +67,12 @@ public class Protocol
 		JSONObject json = new JSONObject(jsonString);
 		String requestHeader = json.getString(TYPE);
 		//System.out.println("Decoding Raw Object: " + requestHeader);
-		switch (requestHeader) {
-			case TEXT_MESSAGE_TYPE:
-				return decodeReceiveTextMessage(json);
-			case CONTACT_REQUEST_TYPE:
-				return decodeContactRequest(json);
+		if (requestHeader.equals(TEXT_MESSAGE_TYPE)) {
+			return decodeReceiveTextMessage(json);
+		} else if (requestHeader.equals(CONTACT_REQUEST_TYPE)) {
+			return decodeContactRequest(json);
 		}
+
 		return null;
 	}
 
@@ -96,8 +96,8 @@ public class Protocol
 	{
 		try {
 			System.out.println(json.getString(CONTACTS));
-		} catch(Exception e) {
-			
+		} catch (Exception e) {
+
 		}
 		return null;
 	}
