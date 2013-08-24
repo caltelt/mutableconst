@@ -67,12 +67,12 @@ public class Protocol
 		JSONObject json = new JSONObject(jsonString);
 		String requestHeader = json.getString(TYPE);
 		//System.out.println("Decoding Raw Object: " + requestHeader);
-		switch (requestHeader) {
-			case TEXT_MESSAGE_TYPE:
-				return decodeReceiveTextMessage(json);
-			case CONTACT_REQUEST_TYPE:
-				return decodeContactRequest(json);
+		if (requestHeader.equals(TEXT_MESSAGE_TYPE)) {
+			return decodeReceiveTextMessage(json);
+		} else if (requestHeader.equals(CONTACT_REQUEST_TYPE)) {
+			return decodeContactRequest(json);
 		}
+
 		return null;
 	}
 
@@ -85,7 +85,7 @@ public class Protocol
 			map.put(PHONE, json.getString(PHONE));
 			return map;
 		} catch (JSONException e) {
-			System.out.println("JSON Error: Unable to decode text message.");
+			System.out.println("JSON Error: Unable to decode receive text message.");
 			e.printStackTrace();
 		}
 		return null;
@@ -94,16 +94,18 @@ public class Protocol
 	private HashMap<String, String> decodeContactRequest(JSONObject json)
 	{
 		try {
+<<<<<<< HEAD
 			System.out.println(json.getString(CONTACTS));
 		} catch (Exception e) {
 
-
+=======
 			//System.out.println(json.getString(CONTACTS));
 			HashMap<String, String> map = new HashMap<String, String>();
 			map.put(CONTACTS, json.getString(CONTACTS));
 			return map;
 		} catch(Exception e) {
 			System.out.println("JSON Error: Unable to decode contacts.");
+>>>>>>> c4e835b6b0bac3859d36fdcbbd5a3a84d755c3d7
 		}
 		return null;
 	}
