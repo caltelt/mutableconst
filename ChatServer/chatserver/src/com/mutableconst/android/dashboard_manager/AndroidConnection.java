@@ -42,7 +42,7 @@ public class AndroidConnection {
 						}
 						handleResponse(Protocol.getProtocol().decodeRawRequest(in.readLine()));
 					} catch (IOException e) {
-
+						
 					}
 				}
 			}

@@ -1,30 +1,35 @@
 package com.mutableconst.chatserver.gui;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.HashMap;
-
-import android.os.Bundle;
 import android.app.Activity;
-import android.app.PendingIntent;
-import android.content.Intent;
-import android.telephony.SmsManager;
+import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.Toast;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 
 import com.mutableconst.android.dashboard_manager.AndroidConnection;
-import com.mutableconst.protocol.Protocol;
+import com.mutableconst.protocol.ConnectionType;
 
 public class MainActivity extends Activity {
+	
+	private SharedPreferences sharedPreferences;	
+	private String preferenceKey = "PREFERENCES";
+	private ConnectionType connectionType;
+	// Reference to ConnectionType Enum class name, used for getting
+	// SharedPreferences connection type name (eg. "WIFI")
+	private String connectionTypeName = ConnectionType.class.getSimpleName();
+	// Reference to ConnectionType Enum class name + Id, used for
+	// accessing sharedPreferences RadioButton id (eg. R.id.buttonId)
+	private String referenceId = ConnectionType.class.getSimpleName() + "Id";
+
+	
 	// Connection details
 	// public static ConnectionType CONNECTION_TYPE = ConnectionType.ADB;
-	// public static String LOCALHOST = "10.0.2.2";
+	// public stati192.168.1.132"c String LOCALHOST = "10.0.2.2";
 
 	// TIMEOUT of connection, in seconds
 	// public static int TIMEOUT = 10;
@@ -34,19 +39,52 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-//		Button connectButton = (Button) findViewById(R.id.connectButton);
-//		connectButton.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				Toast.makeText(MainActivity.this, "Connecting", Toast.LENGTH_SHORT).show();
-//				new AndroidConnection(MainActivity.this);
-//			}
-//		});
-		
 		new AndroidConnection(this);
-		// TODO: SharedPreferences
+		
 		// TODO: Runtime shutdown handler thread
 		// TODO: Communication protocol
+		
+		sharedPreferences = getSharedPreferences(preferenceKey, 0);
+		connectionType = ConnectionType.valueOf(sharedPreferences.getString(connectionTypeName, ConnectionType.WIFI.name()));
+
+		/**
+		 * Get the radio group for selecting the connection type. 
+		 * Check if a radio button has been selected, if so, select it.
+		 */
+		RadioGroup connectionSelection = (RadioGroup) findViewById(R.id.connectionSelection);
+		int selectedRadioButtonId = sharedPreferences.getInt(referenceId, -1);
+		if(selectedRadioButtonId != -1)
+		{
+			RadioButton checkedButton = (RadioButton) findViewById(selectedRadioButtonId);
+			checkedButton.setChecked(true);
+		}
+
+		/**
+		 * Create listener to update the pref when a new connection type is selected
+		 */
+		connectionSelection.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(RadioGroup group, int checkedId) {
+				SharedPreferences.Editor editor = sharedPreferences.edit();
+				RadioButton selectedRadioButton = (RadioButton) findViewById(checkedId);
+				
+				String selectedOption = selectedRadioButton.getText().toString().toUpperCase();
+				editor.putString(connectionTypeName, selectedOption);
+				editor.putInt(referenceId, checkedId);
+				editor.commit();
+				
+				connectionType = ConnectionType.valueOf(selectedOption);
+			}
+		});
+
+		// Quit button
+		Button quitButton = (Button) findViewById(R.id.quitButton);
+		quitButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				System.exit(0);
+			}
+		});
 	}
 
 	@Override
