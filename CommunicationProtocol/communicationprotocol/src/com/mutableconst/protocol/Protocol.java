@@ -35,6 +35,7 @@ public class Protocol
 	//Header Types
 	public final static String TEXT_MESSAGE_TYPE = "TEXT_MESSAGE_TYPE";
 	public final static String CONTACT_REQUEST_TYPE = "CONTACT_REQUEST_TYPE";
+	public final static String PING_TYPE = "PING_TYPE";
 
 	private Protocol()
 	{}
@@ -45,6 +46,12 @@ public class Protocol
 			protocol = new Protocol();
 		}
 		return protocol;
+	}
+	
+	public String encodePing() {
+		JSONObject json = new JSONObject();
+		json.put(TYPE, PING_TYPE);
+		return json.toString();
 	}
 
 	public String encodeSendTextMessage(String phone, String message)
@@ -83,6 +90,7 @@ public class Protocol
 			HashMap<String, String> map = new HashMap<String, String>();
 			map.put(MESSAGE, json.getString(MESSAGE));
 			//map.put(NAME, json.getString(NAME));
+			map.put(TYPE, json.getString(TYPE));
 			map.put(PHONE, json.getString(PHONE));
 			return map;
 		} catch (JSONException e) {

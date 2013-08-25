@@ -73,6 +73,7 @@ public class EventManager {
 	}
 	
 	public boolean recieveTextMessage(String name, String phoneNumber, String message) {
+		System.out.println("Recieving Text Message: " + name + " " + " " + phoneNumber + " " + message);
 		Buddy buddy = new Buddy("Testing", phoneNumber);
 		launchTextWindow(buddy);
 		return true;
