@@ -33,8 +33,8 @@ public class Protocol
 	public final static String CONTACTS = "CONTACTS";
 
 	//Header Types
-	private final static String TEXT_MESSAGE_TYPE = "TEXT_MESSAGE_TYPE";
-	private final static String CONTACT_REQUEST_TYPE = "CONTACT_REQUEST_TYPE";
+	public final static String TEXT_MESSAGE_TYPE = "TEXT_MESSAGE_TYPE";
+	public final static String CONTACT_REQUEST_TYPE = "CONTACT_REQUEST_TYPE";
 
 	private Protocol()
 	{}
@@ -64,15 +64,16 @@ public class Protocol
 
 	public HashMap<String, String> decodeRawRequest(String jsonString)
 	{
-		JSONObject json = new JSONObject(jsonString);
-		String requestHeader = json.getString(TYPE);
-		//System.out.println("Decoding Raw Object: " + requestHeader);
-		if (requestHeader.equals(TEXT_MESSAGE_TYPE)) {
-			return decodeReceiveTextMessage(json);
-		} else if (requestHeader.equals(CONTACT_REQUEST_TYPE)) {
-			return decodeContactRequest(json);
+		if (jsonString != null) {
+			JSONObject json = new JSONObject(jsonString);
+			String requestHeader = json.getString(TYPE);
+			//System.out.println("Decoding Raw Object: " + requestHeader);
+			if (requestHeader.equals(TEXT_MESSAGE_TYPE)) {
+				return decodeReceiveTextMessage(json);
+			} else if (requestHeader.equals(CONTACT_REQUEST_TYPE)) {
+				return decodeContactRequest(json);
+			}
 		}
-
 		return null;
 	}
 
@@ -97,7 +98,7 @@ public class Protocol
 			HashMap<String, String> map = new HashMap<String, String>();
 			map.put(CONTACTS, json.getString(CONTACTS));
 			return map;
-		} catch(Exception e) {
+		} catch (Exception e) {
 			System.out.println("JSON Error: Unable to decode contacts.");
 		}
 		return null;

@@ -66,10 +66,10 @@ public class EventManager {
 		BuddyListWindow.focusBuddyListWindow();
 	}
 
-	public void sendTextMessage(Buddy buddy, String message) {
+	public boolean sendTextMessage(Buddy buddy, String message) {
 		String jsonString = Protocol.getProtocol().encodeSendTextMessage(buddy.getPhoneNumber(), message);
 		System.out.println(jsonString);
-		connection.addRequest(jsonString);
+		return connection.addRequest(jsonString);
 	}
 
 }

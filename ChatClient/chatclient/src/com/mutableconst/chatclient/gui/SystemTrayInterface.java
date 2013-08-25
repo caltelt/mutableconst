@@ -46,7 +46,7 @@ public class SystemTrayInterface {
 				});
 
 				popupMenu.add(item);
-				trayIcon = new TrayIcon(Toolkit.getDefaultToolkit().getImage("icon.jpg"), "MutableConst", popupMenu);
+				trayIcon = new TrayIcon(Toolkit.getDefaultToolkit().getImage("mc.png"), "MutableConst", popupMenu);
 				trayIcon.setImageAutoSize(true);
 				trayIcon.addMouseListener(new MouseAdapter() {
 					public void mouseClicked(MouseEvent e) {

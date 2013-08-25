@@ -37,12 +37,13 @@ public class TextWindow extends JFrame {
 	public TextWindow(final Buddy buddy) {
 		super();
 		this.buddy = buddy;
+		setIconImage(Resources.MCIcon);
 		setTitle(buddy.getName());
 		setSize(555, 390);
 		setMinimumSize(new Dimension(555, 390));
 		setLocationRelativeTo(null);
 		setVisible(true);
-		
+
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
@@ -102,11 +103,12 @@ public class TextWindow extends JFrame {
 
 	private void startSendMessage() {
 		String message = sendMessageText.getText();
-		if (message.length() > 0	) {
-			conversationText.append(SENDER_PREFIX + message + NEW_LINE);
-			sendMessageText.setText(null);
-			scrollBar.setValue(scrollBar.getMaximum());
-			EventManager.getEventManager().sendTextMessage(buddy, message);
+		if (message.length() > 0) {
+			if (EventManager.getEventManager().sendTextMessage(buddy, message)) {
+				conversationText.append(SENDER_PREFIX + message + NEW_LINE);
+				sendMessageText.setText(null);
+				scrollBar.setValue(scrollBar.getMaximum());
+			}
 		}
 	}
 

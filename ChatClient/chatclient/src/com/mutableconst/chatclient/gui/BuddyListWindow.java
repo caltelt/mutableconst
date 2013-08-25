@@ -8,6 +8,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import javax.swing.Box;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -17,7 +18,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import com.mutableconst.dashboard_manager.PrefKeys;
+import com.mutableconst.dashboard_manager.Preferences;
 import com.mutableconst.dashboard_manager.Preferences;
 import com.mutableconst.models.Buddy;
 
@@ -29,7 +30,7 @@ public class BuddyListWindow extends JFrame {
 	private Box friendsArea, topArea;
 	private Box windowBox;
 	BuddyListWindowFriend[] friends;
-
+	
 	public static BuddyListWindow getBuddyListWindow() {
 		if (reference == null) {
 			reference = new BuddyListWindow();
@@ -44,10 +45,11 @@ public class BuddyListWindow extends JFrame {
 
 	private BuddyListWindow() {
 		super("MutableConst");
+		setIconImage(Resources.MCIcon);
 		setSize(225, 750);
 		setMinimumSize(new Dimension(225, 750));
-		if (Preferences.getPreference(PrefKeys.BuddyX) != null && Preferences.getPreference(PrefKeys.BuddyY) != null) {
-			setLocation(new Integer(Preferences.getPreference(PrefKeys.BuddyX)), new Integer(Preferences.getPreference(PrefKeys.BuddyY)));
+		if (Preferences.getPreference(Preferences.BUDDYX) != null && Preferences.getPreference(Preferences.BUDDYY) != null) {
+			setLocation(new Integer(Preferences.getPreference(Preferences.BUDDYX)), new Integer(Preferences.getPreference(Preferences.BUDDYY)));
 		} else {
 			setLocation((int) (GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().getWidth() - getWidth()), 0);
 		}
