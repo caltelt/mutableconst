@@ -1,25 +1,10 @@
 package com.mutableconst.chatserver.gui;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.HashMap;
-
-import android.os.Bundle;
 import android.app.Activity;
-import android.app.PendingIntent;
-import android.content.Intent;
-import android.telephony.SmsManager;
+import android.os.Bundle;
 import android.view.Menu;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.Toast;
 
-import com.mutableconst.android.dashboard_manager.AndroidConnection;
-import com.mutableconst.protocol.Protocol;
+import com.mutableconst.android.dashboard_manager.AndroidEventManager;
 
 public class MainActivity extends Activity {
 	// Connection details
@@ -34,16 +19,7 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-//		Button connectButton = (Button) findViewById(R.id.connectButton);
-//		connectButton.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				Toast.makeText(MainActivity.this, "Connecting", Toast.LENGTH_SHORT).show();
-//				new AndroidConnection(MainActivity.this);
-//			}
-//		});
-		
-		new AndroidConnection(this);
+		AndroidEventManager.getAndroidEventManager().setupEnvironment(this);
 		// TODO: SharedPreferences
 		// TODO: Runtime shutdown handler thread
 		// TODO: Communication protocol

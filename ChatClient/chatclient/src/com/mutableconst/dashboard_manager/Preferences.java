@@ -15,7 +15,7 @@ public class Preferences {
 	
 	//Keys
 	public static final String BUDDYX = "BUDDYX";
-	public static final String BUDDYY = "BUDDY";
+	public static final String BUDDYY = "BUDDYY";
 
 	public static boolean loadPreferences() {
 		try {
