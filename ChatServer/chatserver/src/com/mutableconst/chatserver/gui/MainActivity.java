@@ -4,14 +4,11 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
-import com.mutableconst.android.dashboard_manager.AndroidConnection;
+import com.mutableconst.android.dashboard_manager.AndroidEventManager;
 import com.mutableconst.protocol.ConnectionType;
 
 public class MainActivity extends Activity {
@@ -39,6 +36,7 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		AndroidEventManager.getAndroidEventManager().setupEnvironment(this);
 		new AndroidConnection(this);
 		
 		// TODO: Runtime shutdown handler thread

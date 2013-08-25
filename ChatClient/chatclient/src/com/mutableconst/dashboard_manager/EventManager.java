@@ -71,5 +71,11 @@ public class EventManager {
 		System.out.println(jsonString);
 		return connection.addRequest(jsonString);
 	}
+	
+	public boolean recieveTextMessage(String name, String phoneNumber, String message) {
+		Buddy buddy = new Buddy("Testing", phoneNumber);
+		launchTextWindow(buddy);
+		return true;
+	} 
 
 }

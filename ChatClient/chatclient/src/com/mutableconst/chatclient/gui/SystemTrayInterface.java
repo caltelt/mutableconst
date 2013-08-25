@@ -60,7 +60,7 @@ public class SystemTrayInterface {
 				e.printStackTrace();
 			}
 		} else {
-			JOptionPane.showMessageDialog(null, "System Tray Icon is not supported on this Operating System.", "Error", JOptionPane.ERROR_MESSAGE);
+			//JOptionPane.showMessageDialog(null, "System Tray Icon is not supported on this Operating System.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 }

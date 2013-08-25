@@ -1,18 +1,27 @@
 package com.mutableconst.dashboard_manager;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.Date;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.JOptionPane;
+
+import com.mutableconst.protocol.Protocol;
 
 public class Connection {
 
 	private ServerSocket serverSocket;
 	private ConcurrentLinkedQueue<String> requests;
+	private PrintWriter out;
+	private BufferedReader in;
+	//private InputStream in;
 
 	public Connection() {
 		new Thread(new Runnable() {
@@ -26,11 +35,24 @@ public class Connection {
 							Socket socket = serverSocket.accept();
 							System.out.println("Connection Made!");
 							requests = new ConcurrentLinkedQueue<String>();
-							PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-							while (true) {
-								if (!requests.isEmpty()) {
+							out = new PrintWriter(socket.getOutputStream(), true);
+							in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+							//in = socket.getInputStream();
+							while (socket.isConnected()) {
+								if (requests.isEmpty() == false) {
 									out.println(requests.poll());
 								}
+//								if(in.ready()) {
+//									handleResponse(Protocol.getProtocol().decodeRawRequest(in.readLine()));
+//								}
+								while(in.ready()) {
+									System.out.println(in.read());
+								}
+								System.out.println("Falling out of loop");
+								if(in.ready()) {
+									
+								}
+								
 								try {
 									Thread.sleep(200);
 								} catch (InterruptedException e) {
@@ -43,12 +65,20 @@ public class Connection {
 					}
 
 				} catch (IOException e) {
-					System.out.println("Could not listen on port: 4444");
+					System.out.println("Could not listen on port: 9090");
 					System.exit(-1);
 				}
 			}
 
 		}).start();
+	}
+
+	private void handleResponse(HashMap<String, String> decodedResponse) {
+		if (decodedResponse != null) {
+			if (decodedResponse.get(Protocol.TYPE) == Protocol.TEXT_MESSAGE_TYPE) {
+				EventManager.getEventManager().recieveTextMessage("Doesn't matter", decodedResponse.get(Protocol.PHONE), decodedResponse.get(Protocol.MESSAGE));
+			}
+		}
 	}
 
 	public boolean addRequest(String request) {
