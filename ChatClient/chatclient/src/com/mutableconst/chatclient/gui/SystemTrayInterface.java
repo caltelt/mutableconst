@@ -17,7 +17,10 @@ import com.mutableconst.dashboard_manager.EventManager;
 
 public class SystemTrayInterface {
 
+	private static boolean setup;
+
 	public static void startSystemTray() {
+		if(setup) return; else setup = true;
 		SystemTray systemTray;
 		TrayIcon trayIcon;
 		PopupMenu popupMenu;
@@ -60,5 +63,4 @@ public class SystemTrayInterface {
 			JOptionPane.showMessageDialog(null, "System Tray Icon is not supported on this Operating System.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
-
 }

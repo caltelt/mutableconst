@@ -6,10 +6,6 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.HashMap;
-
-import com.mutableconst.protocol.ConnectionType;
-import com.mutableconst.protocol.Protocol;
-
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -20,6 +16,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.mutableconst.protocol.Protocol;
 
 public class MainActivity extends Activity {
 	// Connection details
@@ -67,7 +65,6 @@ public class MainActivity extends Activity {
 					while (true) {
 						final String rawResponse = in.readLine();
 						final HashMap<String, String> decodedResponse = Protocol.getProtocol().decodeRawRequest(rawResponse);
-						//System.out.println(computerResponse);
 						runOnUiThread(new Runnable() {
 							public void run() {
 								PendingIntent pi = PendingIntent.getActivity(MainActivity.this, 0, new Intent(MainActivity.this, MainActivity.class), 0);
