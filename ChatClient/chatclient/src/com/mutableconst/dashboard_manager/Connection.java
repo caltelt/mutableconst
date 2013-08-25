@@ -21,6 +21,8 @@ public class Connection {
 	private ConcurrentLinkedQueue<String> requests;
 	private PrintWriter out;
 	private BufferedReader in;
+	private final StringBuilder responseBuilder = new StringBuilder();
+	private final char NEW_LINE = '\n';
 	//private InputStream in;
 
 	public Connection() {
@@ -38,21 +40,20 @@ public class Connection {
 							out = new PrintWriter(socket.getOutputStream(), true);
 							in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 							//in = socket.getInputStream();
-							while (socket.isConnected()) {
+							while (socket.isClosed() == false) {
 								if (requests.isEmpty() == false) {
 									out.println(requests.poll());
 								}
-//								if(in.ready()) {
-//									handleResponse(Protocol.getProtocol().decodeRawRequest(in.readLine()));
-//								}
 								while(in.ready()) {
-									System.out.println(in.read());
+									System.out.println("In is ready");
+									char nextChar = (char) in.read();
+									responseBuilder.append(nextChar);
+									if(nextChar == NEW_LINE) {
+										handleResponse(Protocol.getProtocol().decodeRawRequest(responseBuilder.toString()));
+										System.out.println(responseBuilder.toString());
+										responseBuilder.setLength(0);
+									}
 								}
-								System.out.println("Falling out of loop");
-								if(in.ready()) {
-									
-								}
-								
 								try {
 									Thread.sleep(200);
 								} catch (InterruptedException e) {
@@ -75,8 +76,11 @@ public class Connection {
 
 	private void handleResponse(HashMap<String, String> decodedResponse) {
 		if (decodedResponse != null) {
-			if (decodedResponse.get(Protocol.TYPE) == Protocol.TEXT_MESSAGE_TYPE) {
+			if (decodedResponse.get(Protocol.TYPE).equals(Protocol.TEXT_MESSAGE_TYPE)) {
+				System.out.println("Handling Response");
 				EventManager.getEventManager().recieveTextMessage("Doesn't matter", decodedResponse.get(Protocol.PHONE), decodedResponse.get(Protocol.MESSAGE));
+			} else {
+				System.out.println("Not a Text Mesage Type" + decodedResponse.toString() );
 			}
 		}
 	}

@@ -42,7 +42,6 @@ public class TextWindow extends JFrame {
 		setSize(555, 390);
 		setMinimumSize(new Dimension(555, 390));
 		setLocationRelativeTo(null);
-		setVisible(true);
 
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -99,6 +98,8 @@ public class TextWindow extends JFrame {
 		verticalBox.add(horizontalBox);
 
 		add(verticalBox);
+		
+		setVisible(true);
 	}
 
 	private void startSendMessage() {

@@ -29,6 +29,8 @@ public class AndroidConnection {
 	private Activity mainContext;
 	private final SmsManager sms;
 	private ConcurrentLinkedQueue<String> requests;
+	private final StringBuilder responseBuilder = new StringBuilder();
+	private final char NEW_LINE = '\n';
 
 	public AndroidConnection(final Activity mainContext) {
 		requests = new ConcurrentLinkedQueue<String>();
@@ -40,7 +42,7 @@ public class AndroidConnection {
 			public void run() {
 				while (true) {
 					try {
-						if (socket == null || socket.isConnected() == false) {
+						if (socket == null || socket.isClosed()) {
 							sendToast("Creating a New Socket");
 							socket = new Socket(serverAddress, 9090);
 							sendToast("To TOAST MAN");
@@ -51,13 +53,19 @@ public class AndroidConnection {
 							sendToast("Sending Text Message" + requests.peek());
 							out.println(requests.poll());
 						}
-						if (in.ready()) {
-							//handleResponse(Protocol.getProtocol().decodeRawRequest(in.readLine()));
-							System.out.println(in.read());
+						while (in.ready()) {
+							char nextChar = (char) in.read();
+							responseBuilder.append(nextChar);
+							if (nextChar == NEW_LINE) {
+								handleResponse(Protocol.getProtocol().decodeRawRequest(responseBuilder.toString()));
+								sendToast(responseBuilder.toString());
+								responseBuilder.setLength(0);
+							}
 						}
-						System.out.println("Falling out of loop");
+						// addRequest(Protocol.getProtocol().encodePing());
 						Thread.sleep(500);
 					} catch (SocketException e) {
+						sendToast("Socket is null");
 						socket = null;
 						in = null;
 						out = null;
