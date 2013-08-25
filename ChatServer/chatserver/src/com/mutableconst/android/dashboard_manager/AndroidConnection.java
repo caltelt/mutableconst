@@ -21,7 +21,7 @@ import com.mutableconst.protocol.Protocol;
 
 public class AndroidConnection {
 
-	private String serverAddress = "192.168.1.132";
+	private String serverAddress = "192.168.1.138";
 	private Socket socket;
 	private PendingIntent pi;
 	private BufferedReader in;

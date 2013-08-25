@@ -14,3 +14,4 @@
 *.pref
 *.ap_
 bin/
+*.orig
