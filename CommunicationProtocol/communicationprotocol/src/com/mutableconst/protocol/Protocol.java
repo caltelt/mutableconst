@@ -94,14 +94,6 @@ public class Protocol
 	private HashMap<String, String> decodeContactRequest(JSONObject json)
 	{
 		try {
-<<<<<<< HEAD
-=======
-			System.out.println(json.getString(CONTACTS));
-		} catch (Exception e) {
-
-
-			//System.out.println(json.getString(CONTACTS));
->>>>>>> f890810c5a73f99ed2b1caf48ded8addbfd1127e
 			HashMap<String, String> map = new HashMap<String, String>();
 			map.put(CONTACTS, json.getString(CONTACTS));
 			return map;

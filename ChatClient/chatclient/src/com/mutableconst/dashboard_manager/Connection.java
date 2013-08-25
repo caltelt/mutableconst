@@ -51,11 +51,13 @@ public class Connection {
 		}).start();
 	}
 
-	public void addRequest(String request) {
+	public boolean addRequest(String request) {
 		if (requests != null) {
 			requests.add(request);
+			return true;
 		} else {
 			JOptionPane.showMessageDialog(null, "Not Connected to Phone. Please start connection from Phone.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
 		}
 	}
 
