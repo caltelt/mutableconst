@@ -1,3 +1,4 @@
+BuildConfig.java
 *.class
 *.apk
 \.metadata
@@ -11,3 +12,4 @@
 *.*~
 
 .directory
+
