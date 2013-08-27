@@ -7,7 +7,6 @@ import com.mutableconst.protocol.Protocol;
 public class AndroidEventManager {
 
 	private static AndroidEventManager reference;
-	private AndroidConnection connection;
 	
 	public static AndroidEventManager getAndroidEventManager() {
 		if(reference == null) {
@@ -22,11 +21,11 @@ public class AndroidEventManager {
 	
 	public boolean forwardTextToComputer(String phoneNumber, String message) {
 		String jsonString = Protocol.getProtocol().encodeSendTextMessage(phoneNumber, message);
-		return connection.addRequest(jsonString);
+		return AndroidConnection.addRequest(jsonString);
 	}
 
 	public void setupEnvironment(Activity mainContext) {
-		connection = new AndroidConnection(mainContext);
+		AndroidConnection.startAndroidConnection(mainContext);
 	}
 	
 	

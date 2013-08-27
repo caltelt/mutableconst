@@ -13,8 +13,7 @@ import javax.swing.JFrame;
 public class EventManager {
 
 	private static EventManager reference;
-	private HashMap<Buddy, TextWindow> windows;
-	private Connection connection;
+	private HashMap<String, TextWindow> windows;
 
 	public static void main(String[] args) {
 		reference = new EventManager();
@@ -28,33 +27,37 @@ public class EventManager {
 		Preferences.loadPreferences();
 		BuddyListWindow.focusBuddyListWindow();
 		SystemTrayInterface.startSystemTray();
+		Connection.startConnection();
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
 				Preferences.savePreferences();
 			}
 		});
-		windows = new HashMap<Buddy, TextWindow>();
-		connection = new Connection();
+		windows = new HashMap<String, TextWindow>();
 	}
 
 	public static EventManager getEventManager() {
 		return reference;
 	}
 
-	public void launchTextWindow(Buddy buddy) {
-		TextWindow window = windows.get(buddy);
+	public void pingTextWindow(String phoneNumber, String message) {
+		TextWindow window = windows.get(phoneNumber);
 		if (window == null) {
-			windows.put(buddy, new TextWindow(buddy));
+			window = new TextWindow(phoneNumber);
+			windows.put(phoneNumber, window);
 		} else {
 			window.toFront();
 			window.setExtendedState(JFrame.NORMAL);
 			window.repaint();
 		}
+		if(message != null && message.trim().length() > 0) {
+			window.receiveMessage(message.trim());
+		}
 	}
 
-	public void textWindowClose(Buddy buddyObject) {
-		if (windows.containsKey(buddyObject)) {
-			windows.remove(buddyObject);
+	public void textWindowClose(String phoneNumber) {
+		if (windows.containsKey(phoneNumber)) {
+			windows.remove(phoneNumber);
 		}
 	}
 
@@ -66,16 +69,15 @@ public class EventManager {
 		BuddyListWindow.focusBuddyListWindow();
 	}
 
-	public boolean sendTextMessage(Buddy buddy, String message) {
-		String jsonString = Protocol.getProtocol().encodeSendTextMessage(buddy.getPhoneNumber(), message);
+	public boolean sendTextMessage(String phoneNumber, String message) {
+		String jsonString = Protocol.getProtocol().encodeSendTextMessage(phoneNumber, message);
 		System.out.println(jsonString);
-		return connection.addRequest(jsonString);
+		return Connection.addRequest(jsonString);
 	}
 	
-	public boolean recieveTextMessage(String name, String phoneNumber, String message) {
-		System.out.println("Recieving Text Message: " + name + " " + " " + phoneNumber + " " + message);
-		Buddy buddy = new Buddy("Testing", phoneNumber);
-		launchTextWindow(buddy);
+	public boolean recieveTextMessage(String phoneNumber, String message) {
+		System.out.println("Recieving Text Message: " + " " + phoneNumber + " " + message);
+		pingTextWindow(phoneNumber, message);
 		return true;
 	} 
 
