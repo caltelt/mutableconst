@@ -16,6 +16,7 @@ public class Preferences {
 	//Keys
 	public static final String BUDDYX = "BUDDYX";
 	public static final String BUDDYY = "BUDDYY";
+	public static final String IP_ADDRESS = "192.168.1.139";
 
 	public static boolean loadPreferences() {
 		try {

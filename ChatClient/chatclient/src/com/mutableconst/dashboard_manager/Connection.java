@@ -35,7 +35,7 @@ public class Connection {
 	private final StringBuilder responseBuilder = new StringBuilder();
 
 	public static void startConnection() {
-		if(!started) {
+		if (!started) {
 			started = true;
 			new Connection();
 		}
@@ -53,6 +53,7 @@ public class Connection {
 					while (true) {
 						try {
 							if (socket == null) {
+								System.out.println("Connection Made!");
 								System.out.println("Listening");
 								socket = serverSocket.accept();
 								in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -71,17 +72,21 @@ public class Connection {
 									String rawResponse = responseBuilder.toString().trim();
 									System.out.println("Incoming request: " + rawResponse);
 									responseBuilder.setLength(0);
-									if(rawResponse.length() > 0) {
+									if (rawResponse.length() > 0) {
 										handleResponse(new Protocol(rawResponse));
 									}
 								}
-							}
-							pingCounter--;
-							if (pingCounter == 0) {
-								pingCounter = PING_COUNTER;
-								out.println(PING_STRING);
 								if (out.checkError()) {
 									throw new SocketException();
+								}
+								pingCounter--;
+								if (pingCounter == 0) {
+									pingCounter = PING_COUNTER;
+									out.println(PING_STRING);
+									if (out.checkError()) {
+										throw new SocketException();
+									}
+
 								}
 							}
 							Thread.sleep(250);
@@ -108,7 +113,7 @@ public class Connection {
 	}
 
 	private void handleResponse(Protocol response) {
-		if(response.getHeader().equals(Protocol.TEXT_MESSAGE_HEADER)) {
+		if (response.getHeader().equals(Protocol.TEXT_MESSAGE_HEADER)) {
 			System.out.println("Handling Recieve Text Message");
 			EventManager.recieveTextMessage(response.getPhoneNumber(), response.getMessage());
 		} else {

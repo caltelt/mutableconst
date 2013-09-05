@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.telephony.SmsManager;
 import android.widget.Toast;
 
@@ -19,13 +20,17 @@ import com.mutableconst.chatserver.gui.MainActivity;
 import com.mutableconst.protocol.Protocol;
 
 public class AndroidConnection {
-
+	
 	private final char NEW_LINE = '\n';
 	private final int PING_COUNTER = 30;
 	private final String PING_STRING = "";
-
+	
+	private String serverAddress = "192.168.1.100";
 	private final int PORT = 7767;
-	private String serverAddress = "192.168.1.132";
+	private String PREFERENCE_KEY_PREF = "PREFERENCES";
+	private String IP_ADDRESS_PREF = "IP_ADDRESS";	
+	
+	private final int PORT = 7767;
 	private Socket socket;
 	private int pingCounter = PING_COUNTER;
 	private static ConcurrentLinkedQueue<String> requests;
@@ -47,7 +52,8 @@ public class AndroidConnection {
 	}
 
 	private AndroidConnection(final Activity mainContext) {
-
+		SharedPreferences sharedPreferences = mainContext.getSharedPreferences(PREFERENCE_KEY_PREF,0);
+		serverAddress = sharedPreferences.getString(IP_ADDRESS_PREF, serverAddress);	
 		this.mainContext = mainContext;
 		pi = PendingIntent.getActivity(mainContext, 0, new Intent(mainContext, MainActivity.class), 0);
 		sms = SmsManager.getDefault();
@@ -58,10 +64,10 @@ public class AndroidConnection {
 			public void run() {
 				while (true) {
 					try {
+						Thread.sleep(500);
 						if (socket == null) {
-							sendToast("Creating a New Socket");
+							//sendToast("Creating a New Socket");
 							socket = new Socket(serverAddress, PORT);
-							sendToast("To TOAST MAN");
 							in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 							out = new PrintWriter(socket.getOutputStream(), true);
 						}
@@ -69,7 +75,7 @@ public class AndroidConnection {
 							sendToast("Outputing Data: " + requests.peek());
 							out.println(requests.poll());
 						}
-						while (in.ready()) {
+						while (null != in && in.ready()) {
 							char nextChar = (char) in.read();
 							responseBuilder.append(nextChar);
 							if (nextChar == NEW_LINE) {
@@ -81,6 +87,7 @@ public class AndroidConnection {
 								}
 							}
 						}
+	
 						pingCounter--;
 						if (pingCounter == 0) {
 							pingCounter = PING_COUNTER;
@@ -89,9 +96,9 @@ public class AndroidConnection {
 								throw new SocketException();
 							}
 						}
-						Thread.sleep(500);
 					} catch (SocketException e) {
-						sendToast("Socket is null");
+						//sendToast("Socket is null");
+						System.out.println("1");
 						socket = null;
 						in = null;
 						out = null;
