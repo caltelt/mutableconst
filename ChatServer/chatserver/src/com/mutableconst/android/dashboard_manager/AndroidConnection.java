@@ -30,7 +30,6 @@ public class AndroidConnection {
 	private String PREFERENCE_KEY_PREF = "PREFERENCES";
 	private String IP_ADDRESS_PREF = "IP_ADDRESS";	
 	
-	private final int PORT = 7767;
 	private Socket socket;
 	private int pingCounter = PING_COUNTER;
 	private static ConcurrentLinkedQueue<String> requests;
