@@ -21,10 +21,10 @@ public class EventManager {
 	}
 
 	private EventManager() {
-		setupEnviornment();
+		setupEnvironment();
 	}
 	
-	private void setupEnviornment() {
+	private void setupEnvironment() {
 		Preferences.loadPreferences();
 		BuddyListWindow.focusBuddyListWindow();
 		SystemTrayInterface.startSystemTray();

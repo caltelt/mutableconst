@@ -80,7 +80,7 @@ public class Connection {
 				System.out.println("Handling Response");
 				EventManager.getEventManager().recieveTextMessage("Doesn't matter", decodedResponse.get(Protocol.PHONE), decodedResponse.get(Protocol.MESSAGE));
 			} else {
-				System.out.println("Not a Text Mesage Type" + decodedResponse.toString() );
+				System.out.println("Not a Text Mesage Type" + decodedResponse.toString());
 			}
 		}
 	}

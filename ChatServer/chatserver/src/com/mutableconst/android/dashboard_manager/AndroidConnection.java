@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.telephony.SmsManager;
 import android.widget.Toast;
 
@@ -20,8 +21,11 @@ import com.mutableconst.chatserver.gui.MainActivity;
 import com.mutableconst.protocol.Protocol;
 
 public class AndroidConnection {
-
-	private String serverAddress = "192.168.1.138";
+	
+	private String PREFERENCE_KEY_PREF = "PREFERENCES";
+	private String IP_ADDRESS_PREF = "IP_ADDRESS";
+	
+	private String serverAddress = "192.168.1.100";
 	private Socket socket;
 	private PendingIntent pi;
 	private BufferedReader in;
@@ -33,6 +37,9 @@ public class AndroidConnection {
 	private final char NEW_LINE = '\n';
 
 	public AndroidConnection(final Activity mainContext) {
+		SharedPreferences sharedPreferences = mainContext.getSharedPreferences(PREFERENCE_KEY_PREF, 0);
+		serverAddress = sharedPreferences.getString(IP_ADDRESS_PREF, serverAddress);
+		
 		requests = new ConcurrentLinkedQueue<String>();
 		pi = PendingIntent.getActivity(mainContext, 0, new Intent(mainContext, MainActivity.class), 0);
 		sms = SmsManager.getDefault();
@@ -42,10 +49,10 @@ public class AndroidConnection {
 			public void run() {
 				while (true) {
 					try {
+						Thread.sleep(500);
 						if (socket == null || socket.isClosed()) {
-							sendToast("Creating a New Socket");
+							//sendToast("Creating a New Socket");
 							socket = new Socket(serverAddress, 9090);
-							sendToast("To TOAST MAN");
 							in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 							out = new PrintWriter(socket.getOutputStream(), true);
 						}
@@ -53,19 +60,19 @@ public class AndroidConnection {
 							sendToast("Sending Text Message" + requests.peek());
 							out.println(requests.poll());
 						}
-						while (in.ready()) {
+						while (null != in && in.ready()) {
 							char nextChar = (char) in.read();
 							responseBuilder.append(nextChar);
 							if (nextChar == NEW_LINE) {
 								handleResponse(Protocol.getProtocol().decodeRawRequest(responseBuilder.toString()));
-								sendToast(responseBuilder.toString());
+								//sendToast(responseBuilder.toString());
 								responseBuilder.setLength(0);
 							}
 						}
-						// addRequest(Protocol.getProtocol().encodePing());
-						Thread.sleep(500);
+						// TODO fix problem not finding if socket disconnected
 					} catch (SocketException e) {
-						sendToast("Socket is null");
+						//sendToast("Socket is null");
+						System.out.println("1");
 						socket = null;
 						in = null;
 						out = null;

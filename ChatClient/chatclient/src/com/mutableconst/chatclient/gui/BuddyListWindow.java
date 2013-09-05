@@ -115,7 +115,7 @@ public class BuddyListWindow extends JFrame {
 	private BuddyListWindowFriend[] getCurrentBuddies() {
 		BuddyListWindowFriend[] friends = new BuddyListWindowFriend[3];
 		friends[0] = new BuddyListWindowFriend(new Buddy("Casey Foster", "262-994-0732"));
-		friends[1] = new BuddyListWindowFriend(new Buddy("Nick Juszczak", "608-555-397-6053"));
+		friends[1] = new BuddyListWindowFriend(new Buddy("Nick Juszczak", "608-397-6053"));
 		friends[2] = new BuddyListWindowFriend(new Buddy("Alex Hammer", "608-555-3333"));
 		// for(int i = 0; i < friends.length; i++) {
 		// friends[i] = new BuddyListWindowFriend();
