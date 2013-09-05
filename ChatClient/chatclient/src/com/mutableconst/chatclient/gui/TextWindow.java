@@ -21,24 +21,30 @@ import javax.swing.JTextArea;
 import javax.swing.text.DefaultCaret;
 
 import com.mutableconst.dashboard_manager.EventManager;
-import com.mutableconst.models.Buddy;
+import com.mutableconst.models.Contact;
 
 public class TextWindow extends JFrame {
 
-	private final String SENDER_PREFIX = "Me: ";
-	private final String NEW_LINE = "\n";
+	private static final String RECEIVER_PREFIX = "Them: ";
+	private static final String SENDER_PREFIX = "Me: ";
+	private static final String NEW_LINE = "\n";
+
 	private JScrollPane conversationView, sendMessageView;
 	private JTextArea conversationText, sendMessageText;
 	private JScrollBar scrollBar;
 	private JButton sendButton;
 	private Box verticalBox, horizontalBox;
-	private Buddy buddy;
+	private Contact contact;
 
-	public TextWindow(final Buddy buddy) {
+	public TextWindow(final Contact contact) {
 		super();
-		this.buddy = buddy;
+		this.contact = contact;
 		setIconImage(Resources.MCIcon);
-		setTitle(buddy.getName());
+		if(contact.getName() != null && contact.getName().length() > 0) {
+			setTitle(contact.getName()); 
+		} else {
+			setTitle(contact.getPhoneNumber());
+		} 
 		setSize(555, 390);
 		setMinimumSize(new Dimension(555, 390));
 		setLocationRelativeTo(null);
@@ -46,7 +52,7 @@ public class TextWindow extends JFrame {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				EventManager.getEventManager().textWindowClose(buddy);
+				EventManager.textWindowClose(contact.getPhoneNumber());
 			}
 		});
 		setLayout(new BorderLayout());
@@ -103,14 +109,19 @@ public class TextWindow extends JFrame {
 	}
 
 	private void startSendMessage() {
-		String message = sendMessageText.getText();
+		String message = sendMessageText.getText().trim();
 		if (message.length() > 0) {
-			if (EventManager.getEventManager().sendTextMessage(buddy, message)) {
+			if (EventManager.sendTextMessage(contact.getPhoneNumber() , message)) {
 				conversationText.append(SENDER_PREFIX + message + NEW_LINE);
 				sendMessageText.setText(null);
 				scrollBar.setValue(scrollBar.getMaximum());
 			}
 		}
+	}
+
+	public void receiveMessage(String message) {
+		message = message.trim();
+		conversationText.append(RECEIVER_PREFIX + message + NEW_LINE);
 	}
 
 }

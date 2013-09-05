@@ -12,7 +12,11 @@ ChatServer\chatserver\gen\com\mutableconst\chatserver\gui\BuildConfig.java
 *.*~
 
 .directory
+<<<<<<< HEAD
+
+=======
 *.pref
 *.ap_
 bin/
 *.orig
+>>>>>>> upstream/master

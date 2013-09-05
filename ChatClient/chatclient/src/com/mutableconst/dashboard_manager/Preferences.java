@@ -5,7 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import com.mutableconst.chatclient.gui.BuddyListWindow;
+import com.mutableconst.chatclient.gui.ContactWindow;
 
 public class Preferences {
 
@@ -16,6 +16,7 @@ public class Preferences {
 	//Keys
 	public static final String BUDDYX = "BUDDYX";
 	public static final String BUDDYY = "BUDDYY";
+	public static final String IP_ADDRESS = "192.168.1.139";
 
 	public static boolean loadPreferences() {
 		try {
@@ -37,8 +38,8 @@ public class Preferences {
 	}
 
 	private static void setShutDownProperties() {
-		setPreference(BUDDYX, BuddyListWindow.getBuddyListWindow().getX() + "");
-		setPreference(BUDDYY, BuddyListWindow.getBuddyListWindow().getY() + "");
+		setPreference(BUDDYX, ContactWindow.getContactWindow().getX() + "");
+		setPreference(BUDDYY, ContactWindow.getContactWindow().getY() + "");
 	}
 
 	public static String getPreference(String key) {
