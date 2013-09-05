@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import android.app.Activity;
@@ -22,19 +21,19 @@ import com.mutableconst.protocol.Protocol;
 
 public class AndroidConnection {
 	
-	private String PREFERENCE_KEY_PREF = "PREFERENCES";
-	private String IP_ADDRESS_PREF = "IP_ADDRESS";
-	
-	private String serverAddress = "192.168.1.100";
 	private final char NEW_LINE = '\n';
 	private final int PING_COUNTER = 30;
 	private final String PING_STRING = "";
-
+	
+	private String serverAddress = "192.168.1.100";
 	private final int PORT = 7767;
+	private String PREFERENCE_KEY_PREF = "PREFERENCES";
+	private String IP_ADDRESS_PREF = "IP_ADDRESS";	
+	
 	private Socket socket;
 	private int pingCounter = PING_COUNTER;
 	private static ConcurrentLinkedQueue<String> requests;
-	private static boolean notStarted = true;
+	private static boolean started = false;
 
 	private BufferedReader in;
 	private PrintWriter out;
@@ -45,17 +44,15 @@ public class AndroidConnection {
 	private final SmsManager sms;
 
 	public static void startAndroidConnection(Activity mainContext) {
-		SharedPreferences sharedPreferences = mainContext.getSharedPreferences(PREFERENCE_KEY_PREF, 0);
-		serverAddress = sharedPreferences.getString(IP_ADDRESS_PREF, serverAddress);
-		
-		if (notStarted) {
-			notStarted = false;
+		if (!started) {
+			started = true;
 			new AndroidConnection(mainContext);
 		}
 	}
 
 	private AndroidConnection(final Activity mainContext) {
-
+		SharedPreferences sharedPreferences = mainContext.getSharedPreferences(PREFERENCE_KEY_PREF,0);
+		serverAddress = sharedPreferences.getString(IP_ADDRESS_PREF, serverAddress);	
 		this.mainContext = mainContext;
 		pi = PendingIntent.getActivity(mainContext, 0, new Intent(mainContext, MainActivity.class), 0);
 		sms = SmsManager.getDefault();
@@ -81,11 +78,15 @@ public class AndroidConnection {
 							char nextChar = (char) in.read();
 							responseBuilder.append(nextChar);
 							if (nextChar == NEW_LINE) {
-								handleResponse(Protocol.getProtocol().decodeRawRequest(responseBuilder.toString()));
-								sendToast("Incoming request: " + responseBuilder.toString());
+								String rawResponse = responseBuilder.toString().trim();
+								System.out.println("Incoming request: " + rawResponse);
 								responseBuilder.setLength(0);
+								if (rawResponse.length() > 0) {
+									handleResponse(new Protocol(rawResponse));
+								}
 							}
 						}
+	
 						pingCounter--;
 						if (pingCounter == 0) {
 							pingCounter = PING_COUNTER;
@@ -113,14 +114,13 @@ public class AndroidConnection {
 		}).start();
 	}
 
-	private void handleResponse(HashMap<String, String> decodedResponse) {
-		if (decodedResponse != null) {
-			if (decodedResponse.get(Protocol.TYPE).equals(Protocol.TEXT_MESSAGE_TYPE)) {
-				sms.sendTextMessage(decodedResponse.get(Protocol.PHONE), null, decodedResponse.get(Protocol.MESSAGE), pi, null);
-				sendToast("To: " + decodedResponse.get(Protocol.PHONE) + " " + "Message:" + decodedResponse.get(Protocol.MESSAGE));
-			} else {
-				sendToast(decodedResponse.get(Protocol.TYPE));
-			}
+	private void handleResponse(Protocol response) {
+		if (response.getHeader().equals(Protocol.TEXT_MESSAGE_HEADER)) {
+			System.out.println("Handling Recieve Text Message");
+			//TODO move this to AndroidEventManager, how the fuck did it end up here?
+			sms.sendTextMessage(response.getPhoneNumber(), null, response.getMessage(), pi, null);
+		} else {
+			System.out.println("Cant handle this yet O_o");
 		}
 	}
 

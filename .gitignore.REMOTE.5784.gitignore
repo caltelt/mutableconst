@@ -1,0 +1,18 @@
+ChatServer\chatserver\gen\com\mutableconst\chatserver\gui\BuildConfig.java
+*.class
+*.apk
+\.metadata
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+\#*.\#
+*.*~
+
+.directory
+*.pref
+*.ap_
+bin/
+*.orig

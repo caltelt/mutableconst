@@ -47,7 +47,7 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 
 		AndroidEventManager.getAndroidEventManager().setupEnvironment(this);
-		new AndroidConnection(this);
+
 		
 		// TODO: Runtime shutdown handler thread
 		// TODO: Communication protocol
