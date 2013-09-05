@@ -15,11 +15,11 @@ import com.mutableconst.models.Buddy;
 
 public class BuddyListWindowFriend extends JComponent {
 
-	Buddy buddy;
+	String phoneNumber;
 
-	public BuddyListWindowFriend(final Buddy buddy) {
+	public BuddyListWindowFriend(final String phoneNumber) {
 		super();
-		this.buddy = buddy;
+		this.phoneNumber = phoneNumber;
 		setMinimumSize(new Dimension(50, 35));
 		setMaximumSize(new Dimension(50, 35));
 		setPreferredSize(new Dimension(50, 35));
@@ -28,7 +28,7 @@ public class BuddyListWindowFriend extends JComponent {
 		addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
-					EventManager.getEventManager().launchTextWindow(buddy);
+					EventManager.getEventManager().pingTextWindow(phoneNumber, null);
 				}
 			}
 
@@ -40,19 +40,19 @@ public class BuddyListWindowFriend extends JComponent {
 		g.setColor(Color.black);
 		g.fillRect(0, 0, this.getWidth(), this.getHeight());
 		g.setColor(Color.white);
-		g.drawString(buddy.getName(), 0, 25);
-		g.drawString(buddy.getPhoneNumber(), 95, 25);
+		//g.drawString(buddy.getName(), 0, 25);
+		g.drawString(phoneNumber, 95, 25);
 		setSize(getParent().getWidth(), getHeight());
 	}
 	
-	public Buddy getBuddy() {
-		return buddy;
+	public String getPhoneNumber() {
+		return phoneNumber;
 	}
 	
 	public boolean matchesFilter(String filter) {
-		String lowerCaseName = buddy.getName().toLowerCase();
-		String lowerCasePhoneNumber = buddy.getPhoneNumber().toLowerCase();
-		return lowerCaseName.contains(filter) || lowerCasePhoneNumber.contains(filter);
+		//String lowerCaseName = buddy.getName().toLowerCase();
+		String lowerCasePhoneNumber = phoneNumber.toLowerCase();
+		return lowerCasePhoneNumber.contains(filter);
 	}
 
 

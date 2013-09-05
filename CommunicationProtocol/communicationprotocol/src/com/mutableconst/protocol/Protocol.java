@@ -37,6 +37,9 @@ public class Protocol
 	public final static String CONTACT_REQUEST_TYPE = "CONTACT_REQUEST_TYPE";
 	public final static String PING_TYPE = "PING_TYPE";
 
+	//Other
+	public final static String PING_STRING = "";
+
 	private Protocol()
 	{}
 
@@ -47,8 +50,9 @@ public class Protocol
 		}
 		return protocol;
 	}
-	
-	public String encodePing() {
+
+	public String encodePing()
+	{
 		JSONObject json = new JSONObject();
 		json.put(TYPE, PING_TYPE);
 		return json.toString();
@@ -72,13 +76,15 @@ public class Protocol
 	public HashMap<String, String> decodeRawRequest(String jsonString)
 	{
 		if (jsonString != null) {
-			JSONObject json = new JSONObject(jsonString);
-			String requestHeader = json.getString(TYPE);
-			//System.out.println("Decoding Raw Object: " + requestHeader);
-			if (requestHeader.equals(TEXT_MESSAGE_TYPE)) {
-				return decodeReceiveTextMessage(json);
-			} else if (requestHeader.equals(CONTACT_REQUEST_TYPE)) {
-				return decodeContactRequest(json);
+			jsonString = jsonString.trim();
+			if (jsonString.equals(PING_STRING) == false) {
+				JSONObject json = new JSONObject(jsonString);
+				String requestHeader = json.getString(TYPE);
+				if (requestHeader.equals(TEXT_MESSAGE_TYPE)) {
+					return decodeReceiveTextMessage(json);
+				} else if (requestHeader.equals(CONTACT_REQUEST_TYPE)) {
+					return decodeContactRequest(json);
+				}
 			}
 		}
 		return null;

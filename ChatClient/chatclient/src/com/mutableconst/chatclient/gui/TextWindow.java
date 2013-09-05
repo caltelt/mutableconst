@@ -25,20 +25,22 @@ import com.mutableconst.models.Buddy;
 
 public class TextWindow extends JFrame {
 
-	private final String SENDER_PREFIX = "Me: ";
-	private final String NEW_LINE = "\n";
+	private static final String RECEIVER_PREFIX = "Them: ";
+	private static final String SENDER_PREFIX = "Me: ";
+	private static final String NEW_LINE = "\n";
+	
 	private JScrollPane conversationView, sendMessageView;
 	private JTextArea conversationText, sendMessageText;
 	private JScrollBar scrollBar;
 	private JButton sendButton;
 	private Box verticalBox, horizontalBox;
-	private Buddy buddy;
+	private String phoneNumber;
 
-	public TextWindow(final Buddy buddy) {
+	public TextWindow(final String phoneNumber) {
 		super();
-		this.buddy = buddy;
+		this.phoneNumber = phoneNumber;
 		setIconImage(Resources.MCIcon);
-		setTitle(buddy.getName());
+		setTitle(phoneNumber); //Change this to name lookup
 		setSize(555, 390);
 		setMinimumSize(new Dimension(555, 390));
 		setLocationRelativeTo(null);
@@ -46,7 +48,7 @@ public class TextWindow extends JFrame {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				EventManager.getEventManager().textWindowClose(buddy);
+				EventManager.getEventManager().textWindowClose(phoneNumber);
 			}
 		});
 		setLayout(new BorderLayout());
@@ -105,12 +107,17 @@ public class TextWindow extends JFrame {
 	private void startSendMessage() {
 		String message = sendMessageText.getText();
 		if (message.length() > 0) {
-			if (EventManager.getEventManager().sendTextMessage(buddy, message)) {
+			if (EventManager.getEventManager().sendTextMessage(phoneNumber, message)) {
 				conversationText.append(SENDER_PREFIX + message + NEW_LINE);
 				sendMessageText.setText(null);
 				scrollBar.setValue(scrollBar.getMaximum());
 			}
 		}
+	}
+
+	public void receiveMessage(String message) {
+		message = message.trim();
+		conversationText.append(RECEIVER_PREFIX + message + NEW_LINE);
 	}
 
 }

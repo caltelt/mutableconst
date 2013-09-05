@@ -26,38 +26,55 @@ public class AndroidConnection {
 	private String IP_ADDRESS_PREF = "IP_ADDRESS";
 	
 	private String serverAddress = "192.168.1.100";
+	private final char NEW_LINE = '\n';
+	private final int PING_COUNTER = 30;
+	private final String PING_STRING = "";
+
+	private final int PORT = 7767;
 	private Socket socket;
-	private PendingIntent pi;
+	private int pingCounter = PING_COUNTER;
+	private static ConcurrentLinkedQueue<String> requests;
+	private static boolean notStarted = true;
+
 	private BufferedReader in;
 	private PrintWriter out;
-	private Activity mainContext;
-	private final SmsManager sms;
-	private ConcurrentLinkedQueue<String> requests;
 	private final StringBuilder responseBuilder = new StringBuilder();
-	private final char NEW_LINE = '\n';
 
-	public AndroidConnection(final Activity mainContext) {
+	private Activity mainContext;
+	private PendingIntent pi;
+	private final SmsManager sms;
+
+	public static void startAndroidConnection(Activity mainContext) {
 		SharedPreferences sharedPreferences = mainContext.getSharedPreferences(PREFERENCE_KEY_PREF, 0);
 		serverAddress = sharedPreferences.getString(IP_ADDRESS_PREF, serverAddress);
 		
-		requests = new ConcurrentLinkedQueue<String>();
+		if (notStarted) {
+			notStarted = false;
+			new AndroidConnection(mainContext);
+		}
+	}
+
+	private AndroidConnection(final Activity mainContext) {
+
+		this.mainContext = mainContext;
 		pi = PendingIntent.getActivity(mainContext, 0, new Intent(mainContext, MainActivity.class), 0);
 		sms = SmsManager.getDefault();
-		this.mainContext = mainContext;
+		requests = new ConcurrentLinkedQueue<String>();
+
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				while (true) {
 					try {
 						Thread.sleep(500);
-						if (socket == null || socket.isClosed()) {
+						if (socket == null) {
 							//sendToast("Creating a New Socket");
-							socket = new Socket(serverAddress, 9090);
+							socket = new Socket(serverAddress, PORT);
 							in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 							out = new PrintWriter(socket.getOutputStream(), true);
 						}
 						if (requests.isEmpty() == false) {
-							sendToast("Sending Text Message" + requests.peek());
+							sendToast("Outputing Data: " + requests.peek());
 							out.println(requests.poll());
 						}
 						while (null != in && in.ready()) {
@@ -65,11 +82,18 @@ public class AndroidConnection {
 							responseBuilder.append(nextChar);
 							if (nextChar == NEW_LINE) {
 								handleResponse(Protocol.getProtocol().decodeRawRequest(responseBuilder.toString()));
-								//sendToast(responseBuilder.toString());
+								sendToast("Incoming request: " + responseBuilder.toString());
 								responseBuilder.setLength(0);
 							}
 						}
-						// TODO fix problem not finding if socket disconnected
+						pingCounter--;
+						if (pingCounter == 0) {
+							pingCounter = PING_COUNTER;
+							out.println(PING_STRING);
+							if (out.checkError()) {
+								throw new SocketException();
+							}
+						}
 					} catch (SocketException e) {
 						//sendToast("Socket is null");
 						System.out.println("1");
@@ -86,15 +110,16 @@ public class AndroidConnection {
 					}
 				}
 			}
-
 		}).start();
 	}
 
 	private void handleResponse(HashMap<String, String> decodedResponse) {
 		if (decodedResponse != null) {
-			if (decodedResponse.get(Protocol.TYPE) == Protocol.TEXT_MESSAGE_TYPE) {
+			if (decodedResponse.get(Protocol.TYPE).equals(Protocol.TEXT_MESSAGE_TYPE)) {
 				sms.sendTextMessage(decodedResponse.get(Protocol.PHONE), null, decodedResponse.get(Protocol.MESSAGE), pi, null);
 				sendToast("To: " + decodedResponse.get(Protocol.PHONE) + " " + "Message:" + decodedResponse.get(Protocol.MESSAGE));
+			} else {
+				sendToast(decodedResponse.get(Protocol.TYPE));
 			}
 		}
 	}
@@ -107,12 +132,11 @@ public class AndroidConnection {
 		});
 	}
 
-	public boolean addRequest(String request) {
+	public static boolean addRequest(String request) {
 		if (requests != null) {
 			requests.add(request);
 			return true;
 		} else {
-			sendToast("Not connected");
 			return false;
 		}
 	}
