@@ -28,15 +28,15 @@ public class Connection {
 	private ServerSocket serverSocket;
 	private int pingCounter = PING_COUNTER;
 	private static ConcurrentLinkedQueue<String> requests;
-	private static boolean notStarted = true;
+	private static boolean started = false;
 
 	private PrintWriter out;
 	private BufferedReader in;
 	private final StringBuilder responseBuilder = new StringBuilder();
 
 	public static void startConnection() {
-		if (notStarted) {
-			notStarted = false;
+		if(!started) {
+			started = true;
 			new Connection();
 		}
 	}
@@ -68,9 +68,12 @@ public class Connection {
 								char nextChar = (char) in.read();
 								responseBuilder.append(nextChar);
 								if (nextChar == NEW_LINE) {
-									handleResponse(Protocol.getProtocol().decodeRawRequest(responseBuilder.toString()));
-									System.out.println("Incoming request: " + responseBuilder.toString());
+									String rawResponse = responseBuilder.toString().trim();
+									System.out.println("Incoming request: " + rawResponse);
 									responseBuilder.setLength(0);
+									if(rawResponse.length() > 0) {
+										handleResponse(new Protocol(rawResponse));
+									}
 								}
 							}
 							pingCounter--;
@@ -104,14 +107,12 @@ public class Connection {
 
 	}
 
-	private void handleResponse(HashMap<String, String> decodedResponse) {
-		if (decodedResponse != null) {
-			if (decodedResponse.get(Protocol.TYPE).equals(Protocol.TEXT_MESSAGE_TYPE)) {
-				System.out.println("Handling Response");
-				EventManager.getEventManager().recieveTextMessage(decodedResponse.get(Protocol.PHONE), decodedResponse.get(Protocol.MESSAGE));
-			} else {
-				System.out.println("Not a Text Mesage Type" + decodedResponse.toString());
-			}
+	private void handleResponse(Protocol response) {
+		if(response.getHeader().equals(Protocol.TEXT_MESSAGE_HEADER)) {
+			System.out.println("Handling Recieve Text Message");
+			EventManager.recieveTextMessage(response.getPhoneNumber(), response.getMessage());
+		} else {
+			System.out.println("Cant handle this yet O_o");
 		}
 	}
 

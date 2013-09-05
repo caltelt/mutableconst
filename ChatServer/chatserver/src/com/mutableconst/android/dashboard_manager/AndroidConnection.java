@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import android.app.Activity;
@@ -30,7 +29,7 @@ public class AndroidConnection {
 	private Socket socket;
 	private int pingCounter = PING_COUNTER;
 	private static ConcurrentLinkedQueue<String> requests;
-	private static boolean notStarted = true;
+	private static boolean started = false;
 
 	private BufferedReader in;
 	private PrintWriter out;
@@ -41,8 +40,8 @@ public class AndroidConnection {
 	private final SmsManager sms;
 
 	public static void startAndroidConnection(Activity mainContext) {
-		if (notStarted) {
-			notStarted = false;
+		if (!started) {
+			started = true;
 			new AndroidConnection(mainContext);
 		}
 	}
@@ -74,9 +73,12 @@ public class AndroidConnection {
 							char nextChar = (char) in.read();
 							responseBuilder.append(nextChar);
 							if (nextChar == NEW_LINE) {
-								handleResponse(Protocol.getProtocol().decodeRawRequest(responseBuilder.toString()));
-								sendToast("Incoming request: " + responseBuilder.toString());
+								String rawResponse = responseBuilder.toString().trim();
+								System.out.println("Incoming request: " + rawResponse);
 								responseBuilder.setLength(0);
+								if (rawResponse.length() > 0) {
+									handleResponse(new Protocol(rawResponse));
+								}
 							}
 						}
 						pingCounter--;
@@ -106,14 +108,13 @@ public class AndroidConnection {
 		}).start();
 	}
 
-	private void handleResponse(HashMap<String, String> decodedResponse) {
-		if (decodedResponse != null) {
-			if (decodedResponse.get(Protocol.TYPE).equals(Protocol.TEXT_MESSAGE_TYPE)) {
-				sms.sendTextMessage(decodedResponse.get(Protocol.PHONE), null, decodedResponse.get(Protocol.MESSAGE), pi, null);
-				sendToast("To: " + decodedResponse.get(Protocol.PHONE) + " " + "Message:" + decodedResponse.get(Protocol.MESSAGE));
-			} else {
-				sendToast(decodedResponse.get(Protocol.TYPE));
-			}
+	private void handleResponse(Protocol response) {
+		if (response.getHeader().equals(Protocol.TEXT_MESSAGE_HEADER)) {
+			System.out.println("Handling Recieve Text Message");
+			//TODO move this to AndroidEventManager, how the fuck did it end up here?
+			sms.sendTextMessage(response.getPhoneNumber(), null, response.getMessage(), pi, null);
+		} else {
+			System.out.println("Cant handle this yet O_o");
 		}
 	}
 

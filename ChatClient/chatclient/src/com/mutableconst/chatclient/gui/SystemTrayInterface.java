@@ -33,7 +33,7 @@ public class SystemTrayInterface {
 				item = new MenuItem("Buddy List");
 				item.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						EventManager.getEventManager().focusBuddyListWindow();
+						EventManager.focusContactWindow();
 					}
 				});
 
@@ -41,7 +41,7 @@ public class SystemTrayInterface {
 				item = new MenuItem("Exit");
 				item.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						EventManager.getEventManager().exit();
+						EventManager.exit();
 					}
 				});
 
@@ -50,7 +50,7 @@ public class SystemTrayInterface {
 				trayIcon.setImageAutoSize(true);
 				trayIcon.addMouseListener(new MouseAdapter() {
 					public void mouseClicked(MouseEvent e) {
-						EventManager.getEventManager().focusBuddyListWindow();
+						EventManager.focusContactWindow();
 					}
 				});
 

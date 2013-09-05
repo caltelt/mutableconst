@@ -650,12 +650,12 @@ public class JSONObject {
      * @throws JSONException
      *             if there is no string value for the key.
      */
-    public String getString(String key) throws JSONException {
+    public String getString(String key) {
         Object object = this.get(key);
         if (object instanceof String) {
             return (String) object;
         }
-        throw new JSONException("JSONObject[" + quote(key) + "] not a string.");
+        return null;
     }
 
     /**
